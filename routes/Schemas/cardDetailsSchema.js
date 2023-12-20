@@ -72,7 +72,7 @@ default:0
   themeid: {
     type: Number,
   },
-  companyCoverImage:{  type: String,default:'' },
+    companyCoverImage:{ data:Buffer, contentType:String },
   brochure:{
   type:String,
   default:''},
@@ -87,7 +87,11 @@ default:0
 designId:{
 type:Number,
 },
-  companylogo: {
+   companylogo: {
+    data:Buffer, contentType:String 
+    
+  },
+  coverVideo: {
     type: String,
     default:''
     
@@ -200,6 +204,10 @@ type:Number,
     type: String,
     default:''
   },
+  links:{
+	type:Array,
+	default:[],
+	},
   YoutubeVideoLink1: {
     type: String,
     default:''
@@ -329,6 +337,10 @@ hotelName4:{
         type: String,
         default: '',
       },
+	show:{
+	type:String,
+	default:'true'
+	},
     },
   ],
   gallery: [

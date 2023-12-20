@@ -14,6 +14,14 @@ const orderSchema = new mongoose.Schema({
         type: String,
         default:''
     },
+    date:{
+	type:String,
+	default:''
+	},
+    status:{
+	type:String,
+	default:''
+	},
     fullAddress: {
         type: String,
         default:''
@@ -30,22 +38,8 @@ const orderSchema = new mongoose.Schema({
         type: String,
         default:''
     },
-    productName: {
-        type: String,
-        default:''
-    },
-    size: {
-        type: String,
-        default:''
-    },
-    quantity: {
-        type: String,
-        default:''
-    },
-    logo: {
-        type: String,
-        default:''
-    },
+    products:{
+      type:Array},
     payment: {
         type: String,
         default:'Not Done'

@@ -4,6 +4,13 @@ const CardDetails = require("./Schemas/cardDetailsSchema");
 var upload = require("./multer");
 const uuid = require("uuid");
 var pool = require("./pool");
+const fs=require('fs');
+
+
+
+
+
+
 
 router.post("/addcardDetails", upload.single(""), async (req, res) => {
   try {
@@ -47,6 +54,27 @@ cardViewCount,
     return res.status(500).json({ error: "Failed to create cardDetails document" });
   }
 });
+
+
+router.post("/verifyCompanyName",upload.single(""),async(req,res)=>{
+const  {companyId}=req.body;
+console.log(req.body);
+try{
+let uniqueCompanyId = companyId.split(' ').join('');
+const existingCard = await CardDetails.findOne({ companyId:uniqueCompanyId });
+if(existingCard){
+
+return res.status(200).json({status:true,message:"Already Registered"});
+
+}else{
+  return res.status(200).json({status:false,message:"Available"});
+}
+}catch(err){
+console.log(err);
+return res.status(500).json({message:"server Error"});
+}
+});
+
 
 router.post("/updateCardStatus",upload.single(""),async(req,res)=>{
 const  {_id,cardStatus}=req.body;
@@ -360,6 +388,7 @@ catch(err){
 
 
 });
+
 router.post(
   "/updatepersonelinfo",
   upload.any(),
@@ -399,22 +428,33 @@ router.post(
       phonepenumber
     } = req.body;
     console.log(req.body)
-    let companylogo ="";
-    let companyCoverImage="";
+    let companylogo;
+    let type2;
+    let coverVideo ="";
+    let companyCoverImage;
    let type;  
   if(req.files.length!=0)
     {
       req.files.map((item)=>{
         if(item.fieldname=='companylogo')
         {
-        companylogo = item.originalname;
+        companylogo =fs.readFileSync(item.path);
+        type2=item.mimetype
         }
         if(item.fieldname=='companyCover')
         {
-          companyCoverImage=item.originalname;
+          companyCoverImage=fs.readFileSync(item.path);
+          type=item.mimetype
+          
+          
+        }
+        if(item.fieldname=='coverVideo')
+        {
+          coverVideo=item.filename
+        
         }
       })
-     console.log(companyCoverImage)
+     console.log(companyCoverImage!=null)
     }
     try {
       // Check if a customer with the provided email exists
@@ -479,18 +519,28 @@ router.post(
         card.Googlepaynumber = Googlepaynumber;}
         if(phonepenumber!='undefined'){
         card.phonepenumber = phonepenumber;}
-
+        console.log(companylogo)
         if(req.files.length!=0)
         {
-          if(companylogo!=''){
-          card.companylogo = companylogo;}
-         if(companyCoverImage!=''){
-           card.companyCoverImage=companyCoverImage;
-            }  
+          if(companylogo!='' && companylogo!=undefined){
+            card.companylogo.data=companylogo;
+            card.companylogo.contentType=type2;
+          }
+
+          if(companyCoverImage!=null){
+            console.log('bfb')
+            card.companyCoverImage.data=companyCoverImage;
+           card.companyCoverImage.contentType=type;
+           card.coverVideo = coverVideo;}
+            
+            if(coverVideo!=''){
           
-        }
+              card.coverVideo = coverVideo;
+          }  
+          }
+         
         await card.save();
-        console.log(card);
+        // console.log(card);
 
         return res
           .status(200)
@@ -508,11 +558,13 @@ router.post(
     }
   }
 );
+
+
 router.post(
   "/updatesociallinks",
   upload.single("companylogo"),
   async (req, res) => {
-    console.log(req.body);
+    console.log(req.body.links);
     
     const {
       _id,
@@ -527,7 +579,11 @@ router.post(
       YoutubeVideoLink3,
       YoutubeVideoLink4,
       YoutubeVideoLink5,
-      GoogleMapLink
+      GoogleMapLink,
+      menuLink,
+      website,
+      location,
+      links
     } = req.body;
    
     try {
@@ -560,7 +616,15 @@ router.post(
         card.YoutubeVideoLink5 = YoutubeVideoLink5;}
         if(GoogleMapLink!='undefined'){
         card.GoogleMapLink = GoogleMapLink;}
-       
+        if(menuLink!='undefined'){
+        card.menuLink = menuLink;}
+	 if(website!='undefined'){
+        card.website = website;}
+	 if(location!='undefined'){
+        card.location = location;}
+	 if(links!=[]){
+        card.links = JSON.parse(links);}
+
         await card.save();
         console.log(card);
 
@@ -931,6 +995,38 @@ router.post('/deleteecommerceproduct', upload.single(''),async (req, res) => {
     return res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+router.post('/showUpdate', upload.single(''),async (req, res) => {
+  const { cardId, productId,show } = req.body;
+  console.log(req.body)
+
+  try {
+    // Find the card by cardId in the database
+    const card = await CardDetails.findById(cardId);
+
+    // If the card doesn't exist, return an error response
+    if (!card) {
+      return res.status(404).json({ error: 'Card not found' });
+    }
+
+    // Find the product by productId in the card's product array
+    const productIndex = card.ecommerce.findIndex((product) =>product._id.toString() === productId);
+
+    
+    card.ecommerce[productIndex].show = show;
+
+    // Save the updated card in the database
+    await card.save();
+    // Return a success response
+    return res.status(200).json({ status: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+
 router.post("/updategallery", upload.any(),async (req, res) => {
   const { _id } = req.body;
   const gallery=JSON.parse(req.body.gallery)

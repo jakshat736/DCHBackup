@@ -15,6 +15,11 @@ var adminRouter = require('./routes/superadmin');
 var orderRouter=require('./routes/orders');
 var reviewRouter=require('./routes/reviewtag');
 var standeeRouter=require('./routes/standeetag');
+var productRouter=require('./routes/product');
+var menuRouter=require('./routes/menu');
+var cartRouter=require('./routes/cart')
+var categoryRouter=require('./routes/category')
+var subCategoryRouter=require('./routes/subcategory')
 var app = express();
 
 // view engine setup
@@ -96,6 +101,7 @@ console.log(tmid);
 
 
 
+
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/customerLogin', customerRouter);
@@ -106,6 +112,11 @@ app.use('/admin', adminRouter);
 app.use('/orders',orderRouter);
 app.use('/review',reviewRouter);
 app.use('/standee',standeeRouter);
+app.use('/menu',menuRouter);
+app.use('/products',productRouter);
+app.use('/cart',cartRouter)
+app.use('/category',categoryRouter)
+app.use('/subcategory',subCategoryRouter)
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
