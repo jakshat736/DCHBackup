@@ -16,6 +16,12 @@ profile:{
 type:String,
 default:"false"
 },
+
+enquiry:{
+type:String,
+default:"false"
+},
+
 whatsappClickCount:{
 type:Number,
 default:0
@@ -228,6 +234,27 @@ type:Number,
     type: String,
     default:''
   },
+ YoutubeVideoLink6: {
+    type: String,
+    default:''
+  },
+ YoutubeVideoLink7: {
+    type: String,
+    default:''
+  },
+ YoutubeVideoLink8: {
+    type: String,
+    default:''
+  },
+ YoutubeVideoLink9: {
+    type: String,
+    default:''
+  },
+ YoutubeVideoLink10: {
+    type: String,
+    default:''
+  },
+
   GoogleMapLink: {
     type: String,
     default:''

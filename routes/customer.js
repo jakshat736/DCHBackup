@@ -377,6 +377,7 @@ headers: {
     try {
        const result = await transporter.sendMail(mailOptions);
        console.log('Eamil sent successfully')
+
     } catch (error) {
         console.log('Email send failed with error:', error)
     }
@@ -387,6 +388,7 @@ router.post('/sendOtp',upload.single(''), async (req, res) => {
 
     try {
       sendMail(mail,otp);
+return res.status(200).json({status:true,message:"found"});
     } catch (err) {
       console.log(err);
       return res.status(500).json({ message: 'Internal server error' });
@@ -490,6 +492,24 @@ router.post('/chkLogin',upload.single(''), async (req, res) => {
       return res.status(500).json({ error: 'Failed to retrieve user details' });
     }
   });
+
+ router.get('/displayallusers', async (req, res) => {
+    try {
+   
+
+      const customer = await customerLogin.find();
+
+      if (!customer) {
+        return res.status(404).json({ error: 'User details not found' });
+      }
+
+      return res.status(200).json({status:true,data:customer});
+    } catch (error) {
+      console.log(error)
+      return res.status(500).json({ error: 'Failed to retrieve user details' });
+    }
+  });
+
 
   router.post('/updatePassword',upload.single(''),async (req, res) => {
     const { email, password } = req.body;

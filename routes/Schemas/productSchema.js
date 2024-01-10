@@ -29,6 +29,30 @@ const productSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+ Instock: {
+    type: Boolean,
+    default: true
+  },
+
+ 	uploadName: {
+    type: Boolean,
+    required: true
+  },
+	uploadLogo: {
+    type:  Boolean,
+    required: true
+  },
+
+  uploadDescription: {
+    type:  Boolean,
+    required: true
+  },
+   uploadLink: {
+    type:  Boolean,
+    required: true
+  },
+
+
     description: {
     type: String,
     required: true

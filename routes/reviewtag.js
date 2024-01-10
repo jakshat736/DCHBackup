@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const reviewTags = require('./Schemas/reviewTagSchema');
+const reviewTagLinks = require('./Schemas/reviewTagLinkSchema');
 var upload = require("./multer")
 const uuid = require('uuid');
 var pool = require('./pool')
@@ -23,6 +24,41 @@ router.post('/chkTagId', upload.single(), async (req, res) => {
       return res.status(500).json({ message: 'Internal server error' });
     }
   });
+
+
+router.post('/addTagLinkId', upload.single(), async (req, res) => {
+     const {clientName}=req.body;   
+ try {
+        // Find the last entry to get the latest tagId
+          const lastEntry = await reviewTagLinks.findOne({}).sort({ _id: -1 }).limit(1);
+	console.log(lastEntry)
+        let latestNumericTagId = 1; // Default to 1 if no previous entries
+
+        if (lastEntry) {
+            const lastTagId = lastEntry.tagId;
+            const lastNumericTagId = parseInt(lastTagId);
+            latestNumericTagId = lastNumericTagId + 1;
+        }
+
+        const tagId = `${latestNumericTagId}`;
+        console.log(`Generated tagId: ${tagId}`);
+        // Assuming your schema is defined as ReviewTagLinks
+        const reviewTag = new reviewTagLinks({ tagId,clientName });
+
+        try {
+            await reviewTag.save();
+            return res.status(200).json({ status: 'true', tagId:tagId, message: 'Added' });
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({ status: 'false', message: 'Error adding entry' });
+        }
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+
 
 router.post("/updateTagStatus",upload.single(""),async(req,res)=>{
 const  {tagId,status}=req.body;
@@ -47,6 +83,16 @@ return res.status(500).json({message:"server Error"});
 router.get('/displayalltags', async (req, res) => {
     try {
       const cards = await reviewTags.find();
+      return  res.status(200).json(cards)
+    } catch (error) {
+      console.log(error)
+      return res.status(500).json({status:false})
+    }
+  });
+
+router.get('/displayalltaglinks', async (req, res) => {
+    try {
+      const cards = await reviewTagLinks.find();
       return  res.status(200).json(cards)
     } catch (error) {
       console.log(error)
@@ -138,7 +184,7 @@ router.post('/customerLogin', upload.single(), async (req, res) => {
     console.log(customer._id);
     return res
       .status(200)
-      .json({ status: 'true', mobileNumber: phone, message: 'Login successful' });
+      .json({ status: 'true', data: customer, message: 'Login successful' });
 
   } catch (err) {
     console.log(err);
@@ -163,8 +209,8 @@ async function sendMail(email,otp){
         from:'noreply.digitalcardhub.in@gmail.com',
         to: `${email}`,
         subject: 'Welcome to Digital Card Hub',
-        text: `<!doctype html>
-<html  email data-css-strict>
+        html:`<!doctype html>
+<html email data-css-strict>
 
 <head>
   <meta charset="utf-8">
@@ -379,7 +425,7 @@ async function sendMail(email,otp){
 
                             <div style="font-size: 14px; line-height: 160%; text-align: center; word-wrap: break-word;">
                               <p style="font-size: 14px; line-height: 160%;"><span style="font-size: 22px; line-height: 35.2px;">Hi, </span></p>
-                              <p style="font-size: 14px; line-height: 160%;"><span style="font-size: 18px; line-height: 28.8px;">Welcome! You're almost ready to get started. Your One-Time Password (OTP) for email verification is: ${otp}. Please use this OTP to enjoy exclusive cleaning services with us. ! </span></p>
+                              <p style="font-size: 14px; line-height: 160%;"><span style="font-size: 18px; line-height: 28.8px;">Welcome! You're almost ready to get started. Your One-Time Password (OTP) for email verification is: ${otp}. Please use this OTP to enjoy exclusive digital services with us. ! </span></p>
                             </div>
 
                           </td>
@@ -476,7 +522,13 @@ async function sendMail(email,otp){
   <!--[if IE]></div><![endif]-->
 </body>
 
-</html>`    }
+</html>`,
+
+headers: {
+    'Content-Type': 'text/html',
+  },
+
+    }
 
     //3. send email
     try {
@@ -569,4 +621,26 @@ router.post('/deleteReviewTag',upload.single(''), async (req, res) => {
     return res.status(500).json({ message: 'Internal server error' });
   }
 });
+
+router.post('/deleteReviewTagLink',upload.single(''), async (req, res) => {
+  const { _id } = req.body;
+
+  try {
+    // Check if a reviewTag with the provided tagId exists
+    const reviewTag = await reviewTagLinks.deleteOne({ _id });
+
+    if (reviewTag) {
+      // Delete the reviewTag
+
+       console.log("True")
+      return res.status(200).json({ status: true, message: 'ReviewTag deleted successfully' });
+    } else {
+      return res.status(404).json({ status: false, message: 'ReviewTag not found' });
+    }
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 module.exports= router;

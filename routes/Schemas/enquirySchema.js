@@ -6,20 +6,17 @@ const enquirySchema= new Schema({
     
 	name:{
 	       type:String,
-		required:true
-		},
+		default:''},
 	number:{
 		type:String,
-		required:true	
-	},
+		default:''},
 	query:{
 		type:String,
-		required:true
-	},
+		default:''},
 	email:{
 		type:String,
-		required:true	
-	}
+		default:''
+		},
 });
 
 const Enquiry=mongoose.model('Enquiries',enquirySchema);

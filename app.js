@@ -13,6 +13,7 @@ var enquiryRouter = require('./routes/enquiry');
 var customDesignRouter = require('./routes/customDesign');
 var adminRouter = require('./routes/superadmin');
 var orderRouter=require('./routes/orders');
+var menuOrderRouter=require('./routes/menuorder.js');
 var reviewRouter=require('./routes/reviewtag');
 var standeeRouter=require('./routes/standeetag');
 var productRouter=require('./routes/product');
@@ -20,6 +21,8 @@ var menuRouter=require('./routes/menu');
 var cartRouter=require('./routes/cart')
 var categoryRouter=require('./routes/category')
 var subCategoryRouter=require('./routes/subcategory')
+var selfOrderRouter=require('./routes/selforder')
+var generatedCompanyLinkRouter=require('./routes/generatedcompanylink')
 var app = express();
 
 // view engine setup
@@ -68,6 +71,27 @@ app.post('/api/proxy',upload.single(''), (req, res) => {
     });
 });
 
+
+app.post('/otp/api', (req, res) => {
+
+  const apiUrl = req.body.url;
+
+  // Make the API call
+  axios.post(apiUrl)
+    .then(response => {
+      // Return the API response back to the frontend
+      console.log('succes',response)
+      return res.status(200).json({status:true});
+    })
+    .catch(error => {
+      // Handle the error
+      console.log(error)
+      res.status(500).json({ error: 'An error occurred' });
+    });
+});
+
+
+
 app.get('/check-status', (req, res) => {
 
 
@@ -102,7 +126,7 @@ console.log(tmid);
 
 
 
-app.use('/', indexRouter);
+app.use('/index', indexRouter);
 app.use('/users', usersRouter);
 app.use('/customerLogin', customerRouter);
 app.use('/carddetails', cardDetailsRouter);
@@ -110,6 +134,7 @@ app.use('/enquiry', enquiryRouter);
 app.use('/customdesign', customDesignRouter);
 app.use('/admin', adminRouter);
 app.use('/orders',orderRouter);
+app.use('/order',menuOrderRouter);
 app.use('/review',reviewRouter);
 app.use('/standee',standeeRouter);
 app.use('/menu',menuRouter);
@@ -117,6 +142,8 @@ app.use('/products',productRouter);
 app.use('/cart',cartRouter)
 app.use('/category',categoryRouter)
 app.use('/subcategory',subCategoryRouter)
+app.use('/selforder',selfOrderRouter)
+app.use('/generatedcompanylink',generatedCompanyLinkRouter)
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));

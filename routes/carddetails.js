@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const CardDetails = require("./Schemas/cardDetailsSchema");
+const Invite = require("./Schemas/inviteSchema");
+
 var upload = require("./multer");
 const uuid = require("uuid");
 var pool = require("./pool");
@@ -16,25 +18,7 @@ router.post("/addcardDetails", upload.single(""), async (req, res) => {
   try {
     const { customerId, companyname, paymentStatus, cardStatus, createdDate, companyId,cardViewCount } = req.body;
 
-    // Check if companyId already exists in the database
-    const existingCard = await CardDetails.findOne({ companyId });
-
-    let uniqueCompanyId = companyId.split(' ').join('');
-	console.log(uniqueCompanyId)
-    // If companyId already exists, add a number suffix to make it unique
-    if (existingCard) {
-      let suffix = 0;
-      while (true) {
-        suffix++;
-        uniqueCompanyId = `${companyId}${suffix}`;
-
-        const cardWithUniqueCompanyId = await CardDetails.findOne({ companyId: uniqueCompanyId });
-        if (!cardWithUniqueCompanyId) {
-          break;
-        }
-      }
-    }
-
+    // Check if companyId already exists in the databas
     const newCardDetails = new CardDetails({
       customerId,
       companyname,
@@ -42,7 +26,7 @@ router.post("/addcardDetails", upload.single(""), async (req, res) => {
       cardStatus,
       createdDate,
 cardViewCount,
-      companyId: uniqueCompanyId,
+      companyId: companyId,
       cardImage: req.file,
     });
 
@@ -50,6 +34,76 @@ cardViewCount,
 
     return res.status(200).json({ status: true, data: savedCardDetails });
   } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Failed to create cardDetails document" });
+  }
+});
+
+router.post("/addInvite", upload.any(), async (req, res) => {
+  try {
+    const { companyId} = req.body;
+    console.log(req.body)
+    console.log(req.files)
+    let coverVideo=""
+    let invitationVideo=""
+    req.files.map((item)=>{
+	  if(item.fieldname=="coverVideo"){
+		coverVideo=item.originalname
+			}
+	 if(item.fieldname=="invitationVideo"){
+                invitationVideo=item.originalname
+                        }
+
+		})
+                   // Check if companyId already exists in the databas
+   
+
+     const invite= await Invite.findOne({companyId:companyId})
+    
+     if(invite){
+	if(coverVideo!=""){
+	invite.coverVideo=coverVideo}
+        if(invitationVideo!=""){
+        invite.invitationVideo=invitationVideo
+}	
+ const savedCardDetails = await invite.save();
+
+    return res.status(200).json({ status: true, data:savedCardDetails });
+
+	
+	
+		}else{
+ const newCardDetails = new Invite({
+       companyId:companyId,
+       coverVideo:coverVideo,
+       invitationVideo:invitationVideo
+    });
+
+    const savedCardDetails = await newCardDetails.save();
+
+    return res.status(200).json({ status: true, data: savedCardDetails });
+}
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Failed to create cardDetails document" });
+  }
+});
+
+router.post("/fetchInvite", upload.any(), async (req, res) => {
+  try {
+    const { companyId} = req.body;
+
+
+     const invite= await Invite.findOne({companyId:companyId})
+    
+     console.log(invite)
+if(invite){
+    return res.status(200).json({ status: true, data:invite });
+ }else{
+ return res.status(404).json({ status: false });
+
+}  
+} catch (error) {
     console.error(error);
     return res.status(500).json({ error: "Failed to create cardDetails document" });
   }
@@ -147,6 +201,32 @@ return res.status(500).json({message:'error'})
 
 })
 
+
+router.post("/updateEnquiry",upload.single(""),async (req,res)=>{
+
+const {_id,enquiry}=req.body;
+console.log(req.body);
+try{
+const card= await CardDetails.findOne({_id})
+if(card){
+console.log("1",card)
+card.enquiry = enquiry;
+await card.save();
+console.log("2",card)
+
+return res.status(200).json({status:true,message:"updated"});
+
+
+}else{
+return res.status(404).json({status:false,message:"Not found"});
+}
+
+}catch{
+return res.status(500).json({message:'error'})
+
+}
+
+})
 
 
 router.post("/updateWhatsappClickCount", upload.single(""), async (req, res) => {
@@ -317,11 +397,12 @@ router.post("/updateCompanyName", upload.single(""), async (req, res) => {
       // Update the password
       if(companyname!='undefined'){
       card.companyname = companyname;
+	card.companyId = companyname;
       await card.save();}
 
       return res
         .status(200)
-        .json({ status: true, message: "Theme updated successfully" });
+        .json({ status: true, message: "Theme updated successfully",data:card });
     } else {
       return res.status(404).json({ status: false, message: "not found" });
     }
@@ -579,6 +660,11 @@ router.post(
       YoutubeVideoLink3,
       YoutubeVideoLink4,
       YoutubeVideoLink5,
+ YoutubeVideoLink6,
+ YoutubeVideoLink7,
+ YoutubeVideoLink8,
+ YoutubeVideoLink9,
+ YoutubeVideoLink10,
       GoogleMapLink,
       menuLink,
       website,
@@ -614,7 +700,18 @@ router.post(
         card.YoutubeVideoLink4 = YoutubeVideoLink4;}
         if(YoutubeVideoLink5!='undefined'){
         card.YoutubeVideoLink5 = YoutubeVideoLink5;}
-        if(GoogleMapLink!='undefined'){
+ if(YoutubeVideoLink6!='undefined'){
+        card.YoutubeVideoLink6 = YoutubeVideoLink6;}
+ if(YoutubeVideoLink7!='undefined'){
+        card.YoutubeVideoLink7 = YoutubeVideoLink7;}
+ if(YoutubeVideoLink8!='undefined'){
+        card.YoutubeVideoLink8 = YoutubeVideoLink8;}
+ if(YoutubeVideoLink9!='undefined'){
+        card.YoutubeVideoLink9 = YoutubeVideoLink9;}
+ if(YoutubeVideoLink10!='undefined'){
+        card.YoutubeVideoLink10 = YoutubeVideoLink10;}
+        
+if(GoogleMapLink!='undefined'){
         card.GoogleMapLink = GoogleMapLink;}
         if(menuLink!='undefined'){
         card.menuLink = menuLink;}
@@ -911,6 +1008,49 @@ router.post('/deleteproduct', upload.single(''),async (req, res) => {
     return res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+router.post("/updateecommer", upload.any(), async (req, res) => {
+    const { _id } = req.body;
+    const products = JSON.parse(req.body.products);
+
+    try {
+        // Check if a card with the provided _id exists
+        const card = await CardDetails.findOne({ _id });
+
+        if (!card) {
+            return res.status(404).json({ status: false, message: "Card not found" });
+        }
+
+        card.ecommerce = products;
+
+        products.forEach((item) => {
+            if (item !== null) {
+                for (let i = 0; i < 4; i++) {
+                    const imgFieldName = `productimg${i}`;
+                    if (item[imgFieldName]) {
+                        console.log(`Updating ${imgFieldName} for product ${item.index}`);
+                        card.ecommerce[item.index][imgFieldName] = item[imgFieldName].originalname;
+                    }
+                }
+            }
+        });
+
+        console.log('Updated Ecommerce:', card.ecommerce);
+
+        await card.save();
+
+        return res.status(200).json({
+            status: true,
+            data: card,
+            message: "Products updated successfully",
+        });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+
 
 router.post("/updateecommerce", upload.any(),async (req, res) => {
   const { _id } = req.body;

@@ -42,8 +42,8 @@ var CardEnquiry=require('./Schemas/cardEnquirySchema.js')
     const {cardId}=req.body
     try {
       const enquiry = await CardEnquiry.find({cardId:cardId})
-      await enquiry.save();
-
+     
+      console.log(enquiry)
       return  res.status(200).json({status:true,data:enquiry})
     }
     catch (error) {

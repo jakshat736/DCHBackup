@@ -28,7 +28,7 @@ router.post('/chkTagId', upload.single(), async (req, res) => {
 async function sendMail(email,otp){
     //1. create an email transporter.
     //SMTP (Simple Mail Transfer Protocol)
-    const transporter =  nodemailer.createTransport({
+   const transporter =  nodemailer.createTransport({
         service: 'gmail',
         auth:{
             user: 'noreply.digitalcardhub.in@gmail.com',
@@ -40,11 +40,10 @@ async function sendMail(email,otp){
     //2.configure email content.
     const mailOptions = {
         from:'noreply.digitalcardhub.in@gmail.com',
-
         to: `${email}`,
         subject: 'Welcome to Digital Card Hub',
-        text: `<!doctype html>
-<html ⚡4email data-css-strict>
+        html:`<!doctype html>
+<html email data-css-strict>
 
 <head>
   <meta charset="utf-8">
@@ -259,7 +258,7 @@ async function sendMail(email,otp){
 
                             <div style="font-size: 14px; line-height: 160%; text-align: center; word-wrap: break-word;">
                               <p style="font-size: 14px; line-height: 160%;"><span style="font-size: 22px; line-height: 35.2px;">Hi, </span></p>
-                              <p style="font-size: 14px; line-height: 160%;"><span style="font-size: 18px; line-height: 28.8px;">Welcome! You're almost ready to get started. Your One-Time Password (OTP) for email verification is: ${otp}. Please use this OTP to enjoy exclusive cleaning services with us. ! </span></p>
+                              <p style="font-size: 14px; line-height: 160%;"><span style="font-size: 18px; line-height: 28.8px;">Welcome! You're almost ready to get started. Your One-Time Password (OTP) for email verification is: ${otp}. Please use this OTP to enjoy exclusive digital services with us. ! </span></p>
                             </div>
 
                           </td>
@@ -357,6 +356,11 @@ async function sendMail(email,otp){
 </body>
 
 </html>`,
+
+headers: {
+    'Content-Type': 'text/html',
+  },
+
     }
 
     //3. send email
@@ -367,7 +371,6 @@ async function sendMail(email,otp){
         console.log('Email send failed with error:', error)
     }
 }
-
 router.post('/sendOtp',upload.single(''), async (req, res) => {
     const { mail, otp } = req.body;
 
@@ -499,7 +502,7 @@ router.post('/customerLogin', upload.single(), async (req, res) => {
     console.log(customer._id);
     return res
       .status(200)
-      .json({ status: 'true', mobileNumber: phone, message: 'Login successful' });
+      .json({ status: 'true',data:customer, message: 'Login successful' });
   } catch (err) {
     console.log(err);
     return res.status(500).json({ message: 'Internal server error' });
