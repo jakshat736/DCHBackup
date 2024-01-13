@@ -23,6 +23,8 @@ var categoryRouter=require('./routes/category')
 var subCategoryRouter=require('./routes/subcategory')
 var selfOrderRouter=require('./routes/selforder')
 var generatedCompanyLinkRouter=require('./routes/generatedcompanylink')
+var menuLinkRouter=require('./routes/menulink')
+var inviteRouter=require('./routes/invite')
 var app = express();
 
 // view engine setup
@@ -144,6 +146,8 @@ app.use('/category',categoryRouter)
 app.use('/subcategory',subCategoryRouter)
 app.use('/selforder',selfOrderRouter)
 app.use('/generatedcompanylink',generatedCompanyLinkRouter)
+app.use('/menulink',menuLinkRouter)
+app.use('/invite',inviteRouter)
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));

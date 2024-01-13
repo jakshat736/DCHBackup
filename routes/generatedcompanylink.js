@@ -69,8 +69,31 @@ console.log(error)
 }
  })
 
+router.post('/checkCompanyName',upload.any(),async(req,res)=>{
 
-  router.get('/displayallselforders', async (req, res) => {
+      const {companyId}=req.body;
+
+        try{
+
+        const company = await generatedCompanyLink.findOne({"companyId":companyId})
+
+        if(company){
+
+        return res.status(200).json({status:true,data:company})
+
+        }else{
+	
+	return res.status(404).json({status:false})
+	}
+
+        }catch(error){
+console.log(error)
+      return res.status(500).json({status:false})
+}
+ })
+
+
+  router.get('/display', async (req, res) => {
 
 
 

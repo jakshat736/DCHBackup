@@ -1294,7 +1294,7 @@ router.post("/getcardDetails", upload.single(""), async (req, res) => {
 });
 router.get('/displayallcards', async (req, res) => {
     try {
-      const cards = await CardDetails.find();
+      const cards = await CardDetails.find()
       return  res.status(200).json(cards)
     } catch (error) {
       console.log(error)

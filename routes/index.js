@@ -7,28 +7,89 @@ var upload=require('./multer')
 /* GET home page. */
 router.post('/addmenu',upload.any(),async(req,res)=>{
   console.log(req.body)
- const {companyId,dish,price,Halfprice,rating,sorting,stock,description,foodtype}=req.body
-  const form=new addMenuSchema({companyId:companyId,dish:dish,price:price,Halfprice:Halfprice,rating:rating,sorting:sorting,stock:stock,description:description,foodtype:foodtype,Image:req.files[0].originalname})
+ const {menuId,dish,price,Halfprice,rating,sorting,stock,description,foodtype}=req.body
+  const form=new addMenuSchema({menuId:menuId,dish:dish,price:price,Halfprice:Halfprice,rating:rating,sorting:sorting,stock:stock,description:description,foodtype:foodtype,Image:req.files[0].originalname})
   await form.save();
 
   return res.status(200).json({status:true,id:form._id})
 });
 router.post('/MenuOrder',upload.any(),async(req,res)=>{
   console.log(req.body)
- const {companyId,name,phone,message,table,Number,totalPrice,dishes}=req.body
-  const form=new menuOrderSchema({companyId:companyId,name:name,phone:phone,message:message,table:table,Number:Number,totalPrice:totalPrice,dishes:dishes})
+ const {menuId,name,phone,message,table,Number,totalPrice,dishes}=req.body
+  const form=new menuOrderSchema({menuId:menuId,name:name,phone:phone,message:message,table:table,Number:Number,totalPrice:totalPrice,dishes:dishes})
   await form.save();
 
   return res.status(200).json({status:true,data:form})
 });
 
+router.post('/chkTagId', upload.single(), async (req, res) => {
+    let {menuId} = req.body;
+    console.log(req.body);
+    try {
+      let Restaurant = await restaurantDetailsSchema.findOne({ menuId });
+
+      if (!Restaurant){
+        return res.status(200).json({ status: 'false', message: 'Not Found' });
+      } else {
+
+     return res.status(200).json({      status: 'true',data:Restaurant,  message: 'Found', });
+      }
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({ message: 'Internal server error' });
+    }
+  });
+
+router.post('/getTagsByEmail',upload.single(''),async(req,res)=>{
+
+  try{
+        const {email}=req.body;
+        const tags=await restaurantDetailsSchema.findOne({email});
+
+        if(!tags){
+        return res.status(404).json({error:"Not Found"});
+
+        }
+        return res.status(200).json({status:true,data:tags});
+        }catch(error){
+	console.log(error)
+	        return res.status(500).json({error:"error"});
+        }
+
+});
+
+router.post('/customerLogin', upload.single(), async (req, res) => {
+  let { menuId, name, email, phone, password } = req.body;
+
+  try {
+
+    const customer = new restaurantDetailsSchema({
+      menuId: menuId,
+      name: name,
+      email: email,
+      phone: phone,
+      password: password,
+   	  });
+
+    await customer.save();
+
+    console.log(customer._id);
+    return res
+      .status(200)
+      .json({ status: 'true', data: customer, message: 'Login successful' });
+
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
 
 router.post('/search',upload.any(''), async (req, res) => {
   try {
-    const { companyId, keywords } = req.body;
+    const { menuId, keywords } = req.body;
 
     // Assuming you have a company ID field in your addMenuSchema
-    const companyData = await addMenuSchema.findOne({ companyId });
+    const companyData = await addMenuSchema.findOne({ menuId });
 
     if (!companyData) {
       return res.status(404).json({ message: 'Company not found' });
@@ -108,24 +169,19 @@ await form.save()
 router.post('/addRestaurantDetails',upload.single("logo"),async(req,res)=>{
   console.log(req.body)
   console.log(req.file)
- const {companyId,name,number}=req.body
+ const {menuId,restaurantName,number}=req.body
 try{
-  const form=await restaurantDetailsSchema.findOne({companyId:companyId})
-if(!form){
-  const form=new restaurantDetailsSchema({companyId:companyId,name:name,number:number,logo:req.file.originalname})
-  await form.save();
+  const form=await restaurantDetailsSchema.findOne({menuId:menuId})
 
-  return res.status(200).json({status:true,id:form._id})
-}else{
-     form.name=name;
+     form.restaurantName=restaurantName;
      form.number=number;
      if(req.file!=undefined){     
-     form.logo=req.file.originalname
-}     
+     form.logo=req.file.originalname     
+}
 await form.save()
 	return res.status(200).json({status:true,id:form._id})	
 
-	}
+	
 } catch (error) {
     console.error('Error updating status:', error);
     return res.status(500).json({status:false, message: 'Internal Server Error' });
@@ -137,9 +193,9 @@ await form.save()
 router.post('/call',upload.any(""),async(req,res)=>{
   console.log(req.body)
   console.log(req.file)
- const {companyId,call}=req.body
+ const {menuId,call}=req.body
 try{
-  const form=await restaurantDetailsSchema.findOne({companyId:companyId})
+  const form=await restaurantDetailsSchema.findOne({menuId:menuId})
 if(form){
      form.call=call;
 await form.save()
@@ -159,9 +215,9 @@ await form.save()
 
 router.post('/getRestaurantDetails',upload.single("logo"),async(req,res)=>{
   console.log(req.body)
- const {companyId}=req.body
+ const {menuId}=req.body
 try{
-  const form=await restaurantDetailsSchema.findOne({companyId:companyId})
+  const form=await restaurantDetailsSchema.findOne({menuId:menuId})
 if(form){
   return res.status(200).json({status:true,data:form})
     } else {
@@ -228,9 +284,9 @@ router.post('/editImage',upload.any(),async(req,res)=>{
 
 
 router.post('/getDataById',upload.any(),async(req,res)=>{
-   const {companyId}=req.body  
+   const {menuId}=req.body  
 try{
-    const data=await addMenuSchema.find({companyId:companyId});
+    const data=await addMenuSchema.find({menuId:menuId});
     console.log(data)
     return res.status(200).json({data:data})
 
@@ -253,9 +309,9 @@ try{
 
 
 router.post('/menudata',upload.any(),async(req,res)=>{
- const {companyId}=req.body  
+ const {menuId}=req.body  
 try{
-    const data=await menuOrderSchema.find({companyId:companyId});
+    const data=await menuOrderSchema.find({menuId:menuId});
     console.log(data)
     return res.status(200).json({data:data})
 

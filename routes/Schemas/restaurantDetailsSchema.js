@@ -4,22 +4,38 @@ const Schema=mongoose.Schema;
 
 const restaurantDetailsSchema= new Schema({
 	
-	companyId:{
+	menuId:{
 	type:String,
 	required:true,
 	unique:true
 	},
         name:{
                type:String,
-                required:true
+    		required:true
                 },
+	restaurantName:{type:String,default:""},
+  email: {
+    type: String,
+    required: true,
+  },
+    phone: {
+    type: Number,
+    required: true,
+    minLength:10,
+    maxLength:12,
+  },
+    password: {
+    type: String,
+    required: true,
+  },
+
         number:{
                 type:String,
-                required:true
+                default:""
         },
         logo:{
                 type:String,
-                required:true
+                default:""
         },
 	call:{
 		type:String,

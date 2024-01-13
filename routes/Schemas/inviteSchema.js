@@ -4,18 +4,36 @@ const Schema=mongoose.Schema;
 
 const inviteSchema= new Schema({
 
-	companyId:{
+	inviteId:{
 		type:String,
 		required:true,
 		unique:true
 		},
+	 name: {
+    type: String,
+    required: true
+  },
+    email: {
+    type: String,
+    required: true,
+  },
+    phone: {
+    type: Number,
+    required: true,
+    minLength:10,
+    maxLength:12,
+  },
+    password: {
+    type: String,
+    required: true,
+  },
         coverVideo:{
                type:String,
-                required:true
+               default:""
                  },
  	 invitationVideo:{
                type:String,
-                required:true
+               default:""
                 },
 
        

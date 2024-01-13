@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const addMenuSchema = mongoose.Schema(
 
   { 
-     companyId:{
+     menuId:{
         type:String,
         required:true
         },

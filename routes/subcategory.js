@@ -33,7 +33,7 @@ router.post('/edit_subcategory', async (req, res) => {
   try {
     const { categoryid, subcategoryname,subcategoryid } = req.body;
     console.log(req.body)
-    await Subcategory.updateOne({ _id: subcategoryid }, { category: categoryid, subcategoryname: subcategoryname });
+    await Subcategory.updateOne({ _id: subcategoryid }, { categoryid: categoryid, subcategoryname: subcategoryname });
     res.status(200).json({ status: true });
   } catch (error) {
     console.log(error);

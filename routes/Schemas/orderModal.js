@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const menuOrderSchema = mongoose.Schema (
 
 {
-    companyId:{
+    menuId:{
 	type:String,
 	required:true
 	},
