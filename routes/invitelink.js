@@ -11,15 +11,15 @@ var Invite=require('./Schemas/inviteLinkSchema');
 	const {inviteId,inviteName}=req.body
 	var updatedInviteId=inviteId;
         try{
-	  const company = await Invite.findOne({"menuId":menuId})
+	  const company = await Invite.findOne({"inviteId":inviteId})
 	if(company){
 	 let suffix = 0;
-      while (await menuLink.findOne({ "inviteId": updatedInviteId })) {
+      while (await Invite.findOne({ "inviteId": updatedInviteId })) {
         suffix++;
         updatedMenuId = `${inviteId}${suffix}`;
       }
 	}
-        const company1=new menuLink({"inviteId":updatedInviteId,inviteName:inviteName});
+        const company1=new Invite({"inviteId":updatedInviteId,inviteName:inviteName});
         await company1.save();
 
         return res.status(200).json({status:true,data:company1})
