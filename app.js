@@ -25,6 +25,7 @@ var selfOrderRouter=require('./routes/selforder')
 var generatedCompanyLinkRouter=require('./routes/generatedcompanylink')
 var menuLinkRouter=require('./routes/menulink')
 var inviteRouter=require('./routes/invite')
+var inviteLinkRouter=require('./routes/invitelink.js')
 var app = express();
 
 // view engine setup
@@ -148,6 +149,7 @@ app.use('/selforder',selfOrderRouter)
 app.use('/generatedcompanylink',generatedCompanyLinkRouter)
 app.use('/menulink',menuLinkRouter)
 app.use('/invite',inviteRouter)
+app.use('/invitelink',inviteLinkRouter)
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
