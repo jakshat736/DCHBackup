@@ -493,7 +493,7 @@ router.post('/chkLogin',upload.single(''), async (req, res) => {
     }
   });
 
- router.get('/displayalluser', async (req, res) => {
+ router.get('/displayallusers', async (req, res) => {
     try {
    
 
@@ -509,105 +509,6 @@ router.post('/chkLogin',upload.single(''), async (req, res) => {
       return res.status(500).json({ error: 'Failed to retrieve user details' });
     }
   });
-
-router.get('/displayalluse', async (req, res) => {
-  try {
-    // Assuming customerLogin is your Mongoose model for the Customer collection
-    const customers = await customerLogin.find().populate({
-      path: 'cardDetails',
-      select: 'companyId',
-    });
-
-    if (!customers || customers.length === 0) {
-      return res.status(404).json({ error: 'User details not found' });
-    }
-
-    // Extracting companyId from populated cardDetails
-    const userData = customers.map(customer => ({
-      userId: customer._id,
-      companyId: customer.cardDetails ? customer.cardDetails.companyId : null,
-      // Add other fields you want to include from the customerLogin model
-    }));
-
-    return res.status(200).json({ status: true, data: userData });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({ error: 'Failed to retrieve user details' });
-  }
-});
-
-
-router.get('/displayallus', async (req, res) => {
-  try {
-    const customers = await customerLogin.aggregate([
-      {
-        $lookup: {
-          from: 'carddetails', // Name of the collection to join
-          localField: '_id', // Field from the customerLogin collection
-          foreignField: 'userId', // Field from the CardDetails collection
-          as: 'cardDetails' // Name of the field to add to each customerLogin document
-        }
-      },
-      {
-        $project: {
-          _id: 1, // Include the original _id field if needed
-          // Include other fields from customerLogin if needed
-          companyId: { $arrayElemAt: ['$cardDetails.companyId', 0] } // Extract companyId from cardDetails array
-        }
-      }
-    ]);
-
-    return res.status(200).json({ status: true, data: customers });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({ error: 'Failed to retrieve user details' });
-  }
-});
-
-router.get('/displayallusers', async (req, res) => {
-  try {
-    const customers = await customerLogin.find().populate({
-      path: 'cardDetails',
-      select: 'companyId',
-      match: { customerId: { $eq: '$_id' } } // Only populate when customerId matches _id
-    });
-
-    if (!customers || customers.length === 0) {
-      return res.status(404).json({ error: 'User details not found' });
-    }
-    console.log("Heyyyy",customers)
-    // Assuming you want to return an array of user objects
-    const userData = customers.map(customer => ({
-      ...customer.toObject(), // Convert Mongoose document to plain JavaScript object
-      companyId: customer.cardDetails ? customer.cardDetails.companyId : null,
-    }));
-
-    return res.status(200).json({ status: true, data: userData });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({ error: 'Failed to retrieve user details' });
-  }
-});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
