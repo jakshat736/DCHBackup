@@ -26,6 +26,9 @@ var generatedCompanyLinkRouter=require('./routes/generatedcompanylink')
 var menuLinkRouter=require('./routes/menulink')
 var inviteRouter=require('./routes/invite')
 var inviteLinkRouter=require('./routes/invitelink.js')
+var vehicleRouter=require('./routes/vehicletag.js')
+var masterRouter=require('./routes/masterid.js')
+var doorRouter = require('./routes/doortag.js')
 var app = express();
 
 // view engine setup
@@ -150,6 +153,9 @@ app.use('/generatedcompanylink',generatedCompanyLinkRouter)
 app.use('/menulink',menuLinkRouter)
 app.use('/invite',inviteRouter)
 app.use('/invitelink',inviteLinkRouter)
+app.use('/vehicle',vehicleRouter)
+app.use('/master',masterRouter)
+app.use('/door',doorRouter)
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));

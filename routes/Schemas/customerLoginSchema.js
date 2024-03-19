@@ -29,8 +29,15 @@ const customerLoginSchema = new mongoose.Schema({
 	city:{type:String},
 	state:{type:String},
 	pincode:{type:String}
-	}
-  
+	},
+	masterId:{
+	type:String,
+	default:""
+	},
+cardDetails: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'cardDetails'
+  }  
  
   
 });

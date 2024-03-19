@@ -25,9 +25,49 @@ router.post('/chkTagId', upload.single(), async (req, res) => {
     }
   });
 
+router.post('/getByTagId', upload.single(), async (req, res) => {
+     const {tagId}=req.body;
+ try {
+        // Find the last entry to get the latest tagId
+          const lastEntry = await reviewTagLinks.findOne({tagId});
+       
+        try {
+           
+            return res.status(200).json({ status:true, data:lastEntry, message: 'Added' });
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({ status:false, message: 'Error adding entry' });
+        }
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+
+router.post('/displayalltaglinksbymasterid', upload.single(), async (req, res) => {
+     const {masterId}=req.body;
+ try {
+        // Find the last entry to get the latest tagId
+          const lastEntry = await reviewTagLinks.find({masterId});
+
+        try {
+
+            return res.status(200).json({ status:true, data:lastEntry, message: 'Added' });
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({ status:false, message: 'Error adding entry' });
+        }
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+
 
 router.post('/addTagLinkId', upload.single(), async (req, res) => {
-     const {clientName}=req.body;   
+     const {clientName,masterId}=req.body;   
  try {
         // Find the last entry to get the latest tagId
           const lastEntry = await reviewTagLinks.findOne({}).sort({ _id: -1 }).limit(1);
@@ -43,7 +83,7 @@ router.post('/addTagLinkId', upload.single(), async (req, res) => {
         const tagId = `${latestNumericTagId}`;
         console.log(`Generated tagId: ${tagId}`);
         // Assuming your schema is defined as ReviewTagLinks
-        const reviewTag = new reviewTagLinks({ tagId,clientName });
+        const reviewTag = new reviewTagLinks({ tagId,clientName,masterId });
 
         try {
             await reviewTag.save();
@@ -158,7 +198,7 @@ router.post('/updatePassword',upload.single(''),async (req, res) => {
 
 
 router.post('/customerLogin', upload.single(), async (req, res) => {
-  let { tagId, name, email, phone, password } = req.body;
+  let { tagId, name, email, phone, password,masterId } = req.body;
 
   try {
     const currentDate = new Date(); // Get the current date and time
@@ -175,7 +215,8 @@ router.post('/customerLogin', upload.single(), async (req, res) => {
       phone: phone,
       password: password,
       link:"",
-      status:"Active",
+      status:"In Active",
+	masterId:masterId,
       createdDate: formattedDate, // Assign the formatted date to createdDate
     });
 

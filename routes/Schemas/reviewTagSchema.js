@@ -39,6 +39,10 @@ const reviewTagSchema=new mongoose.Schema({
 	type:String,
 	default:''
 	},
+	masterId:{
+	type:String,
+	dafault:''
+	}
 
 });
 

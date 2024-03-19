@@ -12,7 +12,7 @@ router.post('/getTagsByEmail',upload.single(''),async(req,res)=>{
 
   try{
 	const {email}=req.body;
-	const tags=await Invite.find({email});
+	const tags=await Invite.findOne({email});
 	
 	if(!tags){
 	return res.status(404).json({error:"Not Found"});

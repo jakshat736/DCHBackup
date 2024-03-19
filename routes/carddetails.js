@@ -41,7 +41,7 @@ cardViewCount,
 
 router.post("/addInvite", upload.any(), async (req, res) => {
   try {
-    const { companyId} = req.body;
+    const {inviteId} = req.body;
     console.log(req.body)
     console.log(req.files)
     let coverVideo=""
@@ -58,7 +58,7 @@ router.post("/addInvite", upload.any(), async (req, res) => {
                    // Check if companyId already exists in the databas
    
 
-     const invite= await Invite.findOne({companyId:companyId})
+     const invite= await Invite.findOne({inviteId})
     
      if(invite){
 	if(coverVideo!=""){

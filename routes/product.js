@@ -7,7 +7,7 @@ var pool = require("./pool");
 const fs=require('fs');
 
 router.post("/addProduct", upload.any(), async (req, res) => {
-  const { categoryName,subCategoryName,productName,price,offerprice,description,uploadName,uploadLogo,uploadDescription,uploadLink,description1,description2,description3,description4,hotSelling,newArrival } = req.body;
+  const { categoryName,subCategoryName,productName,price,offerprice,description,uploadName,uploadLogo,uploadDescription,uploadLink,customizable,description1,description2,description3,description4,hotSelling,newArrival } = req.body;
   let images=[]
 
   req.files.map((item,index)=>{
@@ -22,7 +22,7 @@ router.post("/addProduct", upload.any(), async (req, res) => {
       price,
 offerprice,
 description,
-uploadName,uploadLogo,uploadDescription,uploadLink,
+uploadName,uploadLogo,uploadDescription,uploadLink,customizable,
 description1,description2,description3,description4,hotSelling,
 newArrival,
       images, // Use the images array directly
@@ -40,7 +40,7 @@ newArrival,
 
 
 router.post("/editProduct", upload.any(), async (req, res) => {
-  const { _id,categoryName,subCategoryName,productName,price,offerprice,description,uploadName,uploadLogo,uploadDescription,uploadLink,description1,description2,description3,description4,hotSelling,newArrival } = req.body;
+  const { _id,categoryName,subCategoryName,productName,price,offerprice,description,uploadName,uploadLogo,uploadDescription,uploadLink,customizable,description1,description2,description3,description4,hotSelling,newArrival } = req.body;
   
   try {
       const product1 = await product.findOne({"_id":_id});
@@ -55,6 +55,7 @@ router.post("/editProduct", upload.any(), async (req, res) => {
 	 product1.uploadLogo=uploadLogo;
 	 product1.uploadDescription=uploadDescription;
 	 product1.uploadLink=uploadLink;
+	product1.customizable=customizable
         product1.description1=description1;
         product1.description2=description2;
         product1.description3=description3;

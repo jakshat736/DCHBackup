@@ -12,6 +12,14 @@ const reviewTagLinkSchema=new mongoose.Schema({
 	clientName:{
 		type:String,
 		required:true,
+		},
+	masterId:{
+		type:String,
+		required:true,
+		},
+	status:{
+	type:String,
+	default:"InActive"
 		}
  
 
