@@ -34,11 +34,10 @@ const customerLoginSchema = new mongoose.Schema({
 	type:String,
 	default:""
 	},
-cardDetails: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'cardDetails'
-  }  
- 
+
+
+
+
   
 });
 
